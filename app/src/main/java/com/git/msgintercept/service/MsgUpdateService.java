@@ -3,6 +3,7 @@ package com.git.msgintercept.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.git.msgintercept.internet.ApiSevice;
 import com.git.msgintercept.internet.HttpUtils;
@@ -36,18 +37,20 @@ public class MsgUpdateService extends IntentService {
         msgUpdateRequest.setSendTime(sendTime);
         msgUpdateRequest.setTimestamp(System.currentTimeMillis());
 
+        Log.i("Zero","msgUpdateRequest: " + msgUpdateRequest.toString());
+
         HttpUtils.getOnlineCookieRetrofit().create(ApiSevice.class).updateOrder(msgUpdateRequest)
                 .subscribe(new RxObserver<BaseResponse>() {
                                @Override
                                public void _onNext(BaseResponse baseResponse) {
                                    super._onNext(baseResponse);
-                                   ToastUtils.showLongToastSafe(baseResponse.toString());
+//                                   ToastUtils.showLongToastSafe(baseResponse.toString());
                                }
 
                                @Override
                                public void _onError(String msg) {
                                    super._onError(msg);
-                                   ToastUtils.showLongToastSafe(msg);
+//                                   ToastUtils.showLongToastSafe(msg);
                                }
                            }
                 );

@@ -2,8 +2,11 @@ package com.git.msgintercept;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 
+import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.grant.PermissionsResultAction;
 import com.git.msgintercept.base.BaseActivity;
 import com.git.msgintercept.utils.Config;
 
@@ -28,8 +31,25 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        requestAllManifestPermissions(this);
         input.setText(Config.getKeyWord());
         baseurl.setText(Config.getBaseUrl());
+    }
+
+    private void requestAllManifestPermissions(final AppCompatActivity compatActivity) {
+        PermissionsManager.getInstance()
+                .requestAllManifestPermissionsIfNecessary(compatActivity,
+                        new PermissionsResultAction() {
+                            @Override
+                            public void onGranted() {
+
+                            }
+
+                            @Override
+                            public void onDenied(String permission) {
+
+                            }
+                        });
     }
 
     @OnClick(R.id.confirm)

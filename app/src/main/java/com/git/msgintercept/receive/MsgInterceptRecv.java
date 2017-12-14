@@ -19,15 +19,12 @@ import com.git.msgintercept.utils.ToastUtils;
  */
 
 public class MsgInterceptRecv extends BroadcastReceiver {
-    private static final String TAG = "MsgInterceptRecv";
+    private static final String TAG = "Zero";
 
     public static final String SMS_RECEIVED_ACTION = "android.provider.Telephony.SMS_RECEIVED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        // TODO Auto-generated method stub
-        Log.i(TAG, "引发接收事件");
         //先判断广播消息
         String action = intent.getAction();
         if (SMS_RECEIVED_ACTION.equals(action)) {
@@ -53,6 +50,7 @@ public class MsgInterceptRecv extends BroadcastReceiver {
                     final String keyword = Config.getKeyWord();
                     boolean intercept = !TextUtils.isEmpty(keyword) && !TextUtils.isEmpty(content) && content.contains(keyword);
                     if (intercept) {
+                        Log.i("Zero", "关键字: " + keyword + ", 收到: " + sender + ", 内容:" + content + ", 时间:" + sendTime.toString());
                         ToastUtils.showLongToastSafe("关键字: %s, 收到: %s, 内容: %s, 时间: %s", keyword, sender, content, sendTime.toString());
                         Intent processIntent = new Intent(context, MsgUpdateService.class);
                         intent.putExtra("content", content);

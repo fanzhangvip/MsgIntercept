@@ -53,4 +53,15 @@ public class MsgUpdateRequest {
     public void setSendTime(String sendTime) {
         this.sendTime = sendTime;
     }
+
+    @Override
+    public String toString() {
+        return "MsgUpdateRequest{" +
+                "timestamp=" + timestamp +
+                ", keyWord='" + keyWord + '\'' +
+                ", content='" + content + '\'' +
+                ", sender='" + sender + '\'' +
+                ", sendTime='" + sendTime + '\'' +
+                '}';
+    }
 }
