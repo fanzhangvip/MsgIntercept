@@ -1,5 +1,6 @@
 package com.git.msgintercept;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +9,10 @@ import android.widget.EditText;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 import com.git.msgintercept.base.BaseActivity;
+import com.git.msgintercept.receive.MsgInterceptRecv;
+import com.git.msgintercept.service.JobScheduleService;
 import com.git.msgintercept.utils.Config;
+import com.git.msgintercept.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,8 +36,20 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         requestAllManifestPermissions(this);
+        Utils.isNotificationListenerEnabled(this);
+        Utils.requestIgnoreBatteryOptimizations(this);
         input.setText(Config.getKeyWord());
         baseurl.setText(Config.getBaseUrl());
+        sendMyAction();
+    }
+
+    private void sendMyAction() {
+        Intent intent = new Intent(MsgInterceptRecv.MSG_ACTION);
+        intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        sendBroadcast(intent);
+
+        Intent jobIntent = new Intent(MainActivity.this, JobScheduleService.class);
+        startService(jobIntent);
     }
 
     private void requestAllManifestPermissions(final AppCompatActivity compatActivity) {

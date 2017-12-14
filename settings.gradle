@@ -1,1 +1,1 @@
-include ':app', ':grant_library'
+include ':app', ':grant_library', ':blogger'

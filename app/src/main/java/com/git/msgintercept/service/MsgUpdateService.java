@@ -11,6 +11,7 @@ import com.git.msgintercept.internet.RxObserver;
 import com.git.msgintercept.internet.bean.BaseResponse;
 import com.git.msgintercept.internet.request.MsgUpdateRequest;
 import com.git.msgintercept.utils.Config;
+import com.git.msgintercept.utils.L;
 import com.git.msgintercept.utils.ToastUtils;
 
 /**
@@ -37,8 +38,7 @@ public class MsgUpdateService extends IntentService {
         msgUpdateRequest.setSendTime(sendTime);
         msgUpdateRequest.setTimestamp(System.currentTimeMillis());
 
-        Log.i("Zero","msgUpdateRequest: " + msgUpdateRequest.toString());
-
+        L.getLogger().tag("Zero").i(msgUpdateRequest.toString());
         HttpUtils.getOnlineCookieRetrofit().create(ApiSevice.class).updateOrder(msgUpdateRequest)
                 .subscribe(new RxObserver<BaseResponse>() {
                                @Override

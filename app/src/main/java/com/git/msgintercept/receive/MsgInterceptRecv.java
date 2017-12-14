@@ -8,9 +8,11 @@ import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.git.msgintercept.service.JobScheduleService;
 import com.git.msgintercept.service.MsgUpdateService;
 import com.git.msgintercept.utils.Config;
 import com.git.msgintercept.utils.DateFormatUtil;
+import com.git.msgintercept.utils.L;
 import com.git.msgintercept.utils.ToastUtils;
 
 /**
@@ -22,11 +24,22 @@ public class MsgInterceptRecv extends BroadcastReceiver {
     private static final String TAG = "Zero";
 
     public static final String SMS_RECEIVED_ACTION = "android.provider.Telephony.SMS_RECEIVED";
+    public static final String ACTION_BOOT = "android.intent.action.BOOT_COMPLETED";
+
+    public static final String MSG_ACTION = "com.git.msgintercept.MSG_ACTION";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         //先判断广播消息
-        String action = intent.getAction();
+        final String action = intent.getAction();
+        if (MSG_ACTION.equals(action)) {
+            Log.i("Zero", "自定义广播为了开启监听进程");
+        }
+        if (ACTION_BOOT.equals(action)) {
+            L.getLogger().tag("Zero").i("监听开机广播为了开启监听进程");
+            Intent jobIntent = new Intent(context, JobScheduleService.class);
+            context.startService(jobIntent);
+        }
         if (SMS_RECEIVED_ACTION.equals(action)) {
             //获取intent参数
             Bundle bundle = intent.getExtras();
@@ -50,17 +63,15 @@ public class MsgInterceptRecv extends BroadcastReceiver {
                     final String keyword = Config.getKeyWord();
                     boolean intercept = !TextUtils.isEmpty(keyword) && !TextUtils.isEmpty(content) && content.contains(keyword);
                     if (intercept) {
-                        Log.i("Zero", "关键字: " + keyword + ", 收到: " + sender + ", 内容:" + content + ", 时间:" + sendTime.toString());
-                        ToastUtils.showLongToastSafe("关键字: %s, 收到: %s, 内容: %s, 时间: %s", keyword, sender, content, sendTime.toString());
+                        L.getLogger().tag("Zero").i("关键字: %s, 收到: %s, 内容: %s, 时间: %s", keyword, sender, content, sendTime.toString());
                         Intent processIntent = new Intent(context, MsgUpdateService.class);
-                        intent.putExtra("content", content);
-                        intent.putExtra("sender", sender);
-                        intent.putExtra("sendTime", sendTime);
+                        processIntent.putExtra("content", content);
+                        processIntent.putExtra("sender", sender);
+                        processIntent.putExtra("sendTime", sendTime);
                         context.startService(processIntent);
                         //TODO: 对于特定的内容,取消广播
                         //abortBroadcast();
                     } else {
-                        ToastUtils.showLongToastSafe("收到: %s, 内容: %s, 时间: %s", sender, content, sendTime.toString());
                     }
                 }
 
